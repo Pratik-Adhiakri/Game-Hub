@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Box Dodger</title>
+    <link rel="stylesheet" href="box.css">
+</head>
+<body>
+    <h1>Box Dodger</h1>
+
+    <div id="game-container">
+        <canvas id="gameCanvas" width="600" height="400"></canvas>
+
+        <div id="ui-layer">
+            <div id="start-screen">
+                <h2>Welcome to Box Dodger</h2>
+                <h3>Ready to play?</h3>
+                <p>Use A/D or &larr;/&rarr; to move left and right.</p>
+                <p>Dodge the falling boxes.</p>
+                <button id="start-btn">Start Game</button>
+                <button id="history-btn" class="secondary-btn">Wanna View History?</button>
+            </div>
+            <div id="game-over-screen" class="hidden">
+                <h2>Game Over</h2>
+                <p>Final Score: <span id="final-score">0</span></p>
+                <div id="high-score">High Score: <span id="best-score">0</span></div>
+                <button id="restart-btn">Try Again?</button>
+                <button id="history-btn-over" class="secondary-btn">History?</button>
+            </div>
+            <div id="history-screen" class="hidden">
+                <h2>Score history</h2>
+                <ul id="score-list">
+
+                </ul>
+                <button id="back-btn">Back</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="box.js"></script>
+</body>
+</html>

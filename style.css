@@ -1,0 +1,87 @@
+:root{
+    --bg: #050505;
+    --text: #ffffff;
+    --accent: #00ff88;
+}
+/*lets gooooooo*/
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+body{
+    font-family: 'Poppins', sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.header-section{
+    padding: 40px 20px;
+    background: linear-gradient(to bottom, #111, #050505);
+    border-bottom: 1px solid #222;
+}
+h1{
+    font-size: 2.5rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1.95px;
+}
+.links-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));/*tbh this was little  tough*/
+    flex-grow: 1;
+    width: 100%;
+}
+.game-card{
+    height: 400px;
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+    overflow: hidden;
+    border: 1px solid #111;
+    display: flex;
+    align-items: flex-end;
+}
+.game-card:hover{
+    border-color: var(--accent);
+    z-index: 10;
+}
+.card-bg{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.6);
+    transition: 0.3s;
+}
+.game-card:hover .card-bg{
+    transform: scale(1.05);
+}
+.card-info{
+    position: relative;
+    padding: 30px;
+    z-index: 2;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transpareent);
+    width: 100%;
+}
+.card-info h2{
+    font-size: 1.7888rem;
+    margin-bottom: 5px;
+}
+.card-info p{
+    font-size: 0.95rem;
+    color: #ccc;
+}
+.footer{
+    padding: 28px;
+    text-align: center;
+    font-size: 0.7rem;
+    color: #333;
+    background: #000;
+}
+/*this is the fastes i have ever finishes a webpage ig hackclub improved me and increased my exp yayayayay*/
