@@ -16,7 +16,7 @@ const backBtn = document.getElementById('back-btn');
 //finally all constants declaration is dobe now let's ufff
 let gameRunning = false;
 let score = 0;
-let hiighScore = localStorage.getItem('spaceDodgerHighScore')||0;
+let highScore = localStorage.getItem('spaceDodgerHighScore')||0;
 let animationId; 
 let frameCount = 0;
 let previousScreen =  startScreen;
@@ -54,7 +54,9 @@ function keyDownHandler(e){
     }
 }
 function keyUpHandler(e){
-    if(e.key==="Right"||e.key==="ArrowRight"||e.key==="d"||e.key==="A"){
+    if(e.key==="Right"||e.key==="ArrowRight"||e.key==="d"||e.key==="D"){
+        rightPressed = false;
+    } else if(e.key==="Left"||e.key==="ArrowLeft"||e.key==="a"||e.key==="A"){
         leftPressed = false;
     }
 }
@@ -63,9 +65,10 @@ function startGame(){
     score = 0;
     enemies = [];
     frameCount = 0;
-    player.x = canvas.width/2 - [player.width/2];
+    player.x = canvas.width/2 - player.width/2;
     startScreen.classList.add('hidden');
-    gameOverScreen.textContent = score;
+    gameOverScreen.classList.add('hidden');
+    scoreDisplay.textContent = score;
     if(animationId) cancelAnimationFrame(animationId);
     gameLoop();
 }
@@ -83,8 +86,8 @@ function gameOver(){
 }
 function saveScoreToHistory(score){
     const history = JSON.parse(localStorage.getItem('spaceDodgerHistory')||'[]');
-    const date = new Date().toLocaleDateString() + ''+ new Date().toLocaleDateString([], {hour: '2-digit', minute:'2-digit'});
-    history.unshift({score:newScore, date:date});
+    const date = new Date().toLocaleDateString() + ' ' + new Date().toLocaleDateString([], {hour: '2-digit', minute:'2-digit'});
+    history.unshift({score:score, date:date});
     if(history.length>10) history.pop();
     localStorage.setItem('spaceDodgerHistory', JSON.stringify(history));
 }
@@ -118,7 +121,7 @@ function spawnEnemy(){
     });
 }
 function drawPlayer(){
-    ctx.beginnPath();
+    ctx.beginPath();
     ctx.rect(player.x, player.y, player.width, player.height);
     ctx.fillStyle = '#e94560';
     ctx.fill();
@@ -126,8 +129,8 @@ function drawPlayer(){
 }
 function drawEnemies(){
     enemies.forEach(enemy=>{
-        ctx.beginnPath();
-        ctx.rect(player.x, player.y, player.width, player.height);
+        ctx.beginPath();
+        ctx.rect(enemy.x, enemy.y, enemy.width, enemy.height);
         ctx.fillStyle = enemy.color;
         ctx.fill();
         ctx.closePath();

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Space shooter</title>
+    <link rel="stylesheet" href="space.css">
+</head>
+<body>
+
+    <div id="gameContainer">
+        <div id="uiLayer">
+            <div id="scoreBoard">Score: <span id="scoreValue">0</span></div>
+            <div id="healthBar"></div>
+            <div id="healthFill"></div>
+        </div>
+    </div>
+    <div id="startScreen">
+        <h1>Space Shooter</h1>
+        <p>Use WASD keys or arrow keys to move and Space to shoot</p>
+        <button id="startBtn">Launch the Rocket</button>
+    </div>
+
+    <div id="gameOverScreen" style="display: none;">
+        <h1>GAME OVER</h1>
+        <p>Final Score: <span id="finalScore">0</span></p>
+        <button id="restartBtn">Restart/Try Again?</button>
+    </div>
+    
+    <script src="space.js"></script>
+</body>
+</html>

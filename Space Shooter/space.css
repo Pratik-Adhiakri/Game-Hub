@@ -1,0 +1,102 @@
+/*lets doccs */
+body{
+    margin: 0;
+    padding: 0;
+    background-color: #111;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+}
+#gameContainer{
+    height: 600px;
+    width: 800px;
+    position: relative;
+    border: 2px solid #333;
+    background-color: #000;
+}
+canvas{
+    height: 100%;
+    width: 100%;
+    display: block;
+}
+#uiLayer{
+    position: absolute;
+    top:0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 10;
+    box-sizing: border-box;
+    pointer-events: none;
+}
+#scoreBoard{
+    color: #fff;
+    font-size: 24px;
+    font-weight: bold;
+}
+#healthBar{
+    width: 200px;
+    height: 20px;
+    border: 2px solid #fff;
+    border-radius: 4px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.1);
+}
+#healthFill{
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #ff3333, #ff8833);
+    transition: width 0.2s ease;
+}
+/*css is enjoying to write but i cant figure out that much good design maybe css is not for me ig*/
+#startScreen, #gameOverScreen{
+    color: white;
+    background: rgba(0, 0, 0, 0.85);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+}
+h1{
+    color: #00d2ff;
+    font-size: 48px;
+    margin-bottom: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+p{
+    color: #aaa;
+    font-size: 18px;
+    margin-bottom: 30px;
+}
+button{
+    color: #000;
+    background: #00d2ff;
+    font-size: 20px;
+    padding: 15px 40px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: transform 0.1s, background 0.2s;
+}
+button:hover{
+   background: #fff; 
+    transform: scale(1.05);
+}
+button:active{
+    transform: scale(0.95);
+}
+/*finnally done yay*/
