@@ -23,7 +23,8 @@ const keys = {
     ArrowLeft: false,
     ArrowDown: false,
     ArrowRight: false,
-    Space: false
+    Space: false,
+    " ": false
 };
 const player = {
     x: canvas.width/2,
@@ -39,6 +40,7 @@ const player = {
 let projectiles = [];
 let enemies = [];
 let stars = [];
+let particles = [];
 //finally all defining stuffs is over
 
 function initStars(){
@@ -48,11 +50,11 @@ function initStars(){
             x: Math.random()*canvas.width,
             y: Math.random()*canvas.height,
             size: Math.random()*2,
-            speed:Math.random()*3+0.5;
+            speed:Math.random()*3+0.5
         });
     }
 }
-function creareExplosion(x,y,color){
+function createExplosion(x,y,color){
     for(let i=0;i<15;i++){
         particles.push({
             x:x,
@@ -140,7 +142,7 @@ function updatePlayer(){
     if(player.x>canvas.width - 20) player.x = canvas.width - 20;
     if(player.y<20) player.y = 20;
     if(player.y>canvas.width-20) player.y = canvas.height - 20;
-    if(keys.Space||keys[''] && frameCount>player.lastShot + player.shpptDelay){
+    if((keys.Space||keys[' ']) && frameCount>player.lastShot + player.shootDelay){
         projectiles.push({
             x:player.x,
             y:player.y-20,
@@ -172,7 +174,7 @@ function updateEnemies(){
         spawnEnemy();
     }
     for(let i=enemies.length-1;i>=0;i--){
-        let e= emeies[i];
+        let e= enemies[i];
         e.y+=e.speed;
         ctx.fillStyle = e.color;
         ctx.beginPath();
@@ -190,10 +192,10 @@ function updateEnemies(){
         }
         ctx.fill();
         if(
-            player.x<e.x+e.width &&
-            player.x>e.x &&
-            player.y<e.y+ e.height &&
-            player.y>e.y
+            player.x < e.x + e.width &&
+            player.x + player.width > e.x &&
+            player.y < e.y + e.height &&
+            player.y + player.height > e.y
         ){
             player.health -= 20;
             createExplosion(player.x, player.y, '#ff0000');
@@ -205,10 +207,10 @@ function updateEnemies(){
         for(let j=projectiles.length -1;j>=0;j--){
             let p= projectiles[j];
             if(
-                p.x>e.x &&
-                p.x<e.x + e.width &&
-                p.y > e.y &&
-                p.y <e.y + e.height
+                p.x < e.x + e.width &&
+                p.x + p.width > e.x &&
+                p.y < e.y + e.height &&
+                p.y + p.height > e.y
             ) {
                 e.hp--;
                 projectiles.splice(j,1);
@@ -217,6 +219,7 @@ function updateEnemies(){
                     score+=100;
                     scoreEl.innerText = score;
                     createExplosion(e.x+e.width/2,e.y+e.height/2,e.color);
+                    enemies.splice(i,1);
                 }
                 break;
             }
@@ -227,3 +230,67 @@ function updateEnemies(){
     } 
 }
 //finally finished the hardest function ufff
+function updateParticles(){
+    for(let i=particles.length - 1;i>=0;i--){
+        let p = particles[i];
+        p.x += p.vx;
+        p.y +=p.vy;
+        p.life--;
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.life/50;
+        ctx.fillRect(p.x,p.y,p.size,p.size);
+        ctx.globalAlpha = 1.0;
+        if(p.life<=0){
+            particles.splice(i,1);
+        }
+    }
+}
+function updateHealthUI(){
+    let pct = Math.max(0, (player.health/player.maxHealth)*100);
+    healthFill.style.width = `${pct}%`;
+}
+//last coup,e of function yay
+function gameLoop(){
+    if(!gameActive) return;
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    updateStars();
+    updatePlayer();
+    drawPlayer();
+    updateProjectiles();
+    updateEnemies();
+    updateParticles();
+    frameCount++;
+    requestAnimationFrame(gameLoop);
+}
+function startGame(){
+    gameActive = true;
+    score = 0;
+    player.health = 100;
+    player.x = canvas.width/2;
+    player.y = canvas.height - 80;
+    enemies = [];
+    projectiles = [];
+    particles = [];
+    scoreEl.innerText = '0';
+    updateHealthUI();
+    startScreen.style.display = 'none';
+    gameOverScreen.style.display = 'none';
+    gameLoop();
+}
+function endGame(){
+    gameActive = false;
+    finalScoreEl.innerText = score;
+    gameOverScreen.style.display = 'flex';
+}
+window.addEventListener('keydown', e =>{
+    if(keys.hasOwnProperty(e.key)) keys[e.key] = true;
+    if(e.key === ' ' && !gameActive && startScreen.style.display !== 'none' ) startGame();
+});
+window.addEventListener('keyup', e=>{
+    if(keys.hasOwnProperty(e.key)) keys[e.key]=false;
+});
+startBtn.addEventListener('click', startGame);
+restartBtn.addEventListener('click', startGame);
+initStars();
+gameLoop();

@@ -86,7 +86,7 @@ function gameOver(){
 }
 function saveScoreToHistory(score){
     const history = JSON.parse(localStorage.getItem('spaceDodgerHistory')||'[]');
-    const date = new Date().toLocaleDateString() + ' ' + new Date().toLocaleDateString([], {hour: '2-digit', minute:'2-digit'});
+    const date = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
     history.unshift({score:score, date:date});
     if(history.length>10) history.pop();
     localStorage.setItem('spaceDodgerHistory', JSON.stringify(history));
@@ -172,7 +172,7 @@ function update(){
 function draw(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawPlayer();
-    drawEnemies()
+    drawEnemies();
 }
 function gameLoop(){
     if(!gameRunning) return;
