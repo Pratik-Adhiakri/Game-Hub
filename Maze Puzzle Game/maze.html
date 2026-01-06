@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maze Puzzle</title>
+    <link rel="stylesheet" href="maze.css">
+</head>
+<body>
+    <div class="main-container">
+        <header>
+            <h1>MAZE <span class="highlight">PUZZLE</span></h1>
+            <div class="stats-bar">
+                <div class="stat-box">
+                    <span class="label">LEVEL</span>
+                    <span id="levelValue">1</span>
+                </div>
+                <div class="stat-box">
+                    <div class="label">TIME</div>
+                    <span id="timeValue">00.00</span>
+                </div>
+            </div>
+        </header>
+
+
+        <div class="game-wrapper">
+            <div id="overlay" class="visible">
+                <h2 id="overlayTitle">READY?</h2>
+                <p id="overlaySubtitle">Move through these yellow sectors to exit and complete the level.</p>
+                <button id="actionBtn">START</button>
+            </div>
+            <canvas id="mazeCanvas"></canvas>
+        </div>
+
+        <div class="controls-hint">
+            Use WASD or Arrow Keys to move.
+        </div>
+    </div>
+
+
+    <script src="maze.js"></script>
+</body>
+</html>
