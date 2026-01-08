@@ -51,7 +51,7 @@ h1{
     gap: 20px;
 }
 .stat-box{
-    color: var(--panel);
+    color: var(--primary);
     border: 1px solid var(--dim);
     padding: 8px 15px;
     border-radius: 4px;
