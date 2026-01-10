@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Arcade</title>
+</head>
+<body>
+    <!--lets start another game yay-->
+    <div class="arcade-cabinet">
+        <div class="crt-monitor">
+            <div class="stats-hud" id="hud">
+                <div class="stat-box">SCORE: <span id="score-display">0</span></div>
+                <div class="stat-box">HIGH: <span id="high-score-display">0</span></div>
+                <div class="stat-box">LVL: <span id="level-display"></span></div>
+            </div>
+
+            <div class="powerup-indicator" id="powerup-hud">
+
+            </div>
+
+            <div id="main-menu" class="ui-layer active">
+                <h1>NEON SNAKE</h1>
+                <h2>ARCADE EDITION!!!!!</h2>
+                <button class="btn" id="start-btn">INSERT COIN (START)</button>
+                <button class="btn" id="settings-btn">SETTINGS</button>
+                <div style="
+                 margin-top: 20px;
+                 font-size: 0.8rem;
+                 color: #888;">
+                ARROWS TO MOVE, SPACE TO PAUSE 
+                </div>
+            </div>
+            <div id="pause-menu" class="ui-layer">
+                <h1>PAUSED</h1>
+                <button class="btn" id="resume-btn">RESUME</button>
+                <button class="btn" id="quit-btn">QUIT</button>
+            </div>
+            <div id="settings-menu" class="ui-layer">
+                <h1>SETTINGS</h1>
+                <div style="margin-bottom: 20px;">
+                    <label>THEME:</label>
+                    <button class="btn" id="theme-toggle" style="padding: 5px 20px; font-size: 1rem;">CLASSIC</button>
+                    <div style="margin-bottom: 20px;">
+                        <label>SOUND:</label>
+                        <button class="btn" id="sound-toggle" style="padding: 5px 20px; font-size: 1rem;">ON</button>
+                    </div>
+                    <button class="btn" id="back-btn">BACK</button>
+                </div>
+            </div>
+
+            <div class="virtual-controls">
+                <div class="d-pad">
+                <div class="d-btn d-up" data-key="ArrowUp">▲</div>
+                <div class="d-btn d-left" data-key="ArrowLeft">◀</div>
+                <div class="d-btn d-right" data-key="ArrowRight">▶</div>
+                <div class="d-btn d-down" data-key="ArrowDown">▼</div>
+            </div>
+            <div class="branding" style="text-align: center; opacity: 0.3; display: flex; flex-direction: column;">
+                <span>SYSTEM 84</span>
+                <span style="font-size: 10px;">STEREO SOUND</span>
+            </div>
+            <div class="action-buttons">
+                <div>
+                    <div class="action-btn btn-b" id="ctrl-dash"></div>
+                    <div class="label">DASH</div>
+                </div>
+                <div>
+                    <div class="action-btn btn-a" id="ctrl-action"></div>
+                    <div class="label">PAUSE</div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
