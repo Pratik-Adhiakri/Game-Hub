@@ -231,3 +231,67 @@ h2{
     margin-top: 5px;
     text-align: center;
 }
+/*lets do the coolest part, animation*/
+@keyframes flicker{
+    0%{
+        opacity: 0.97;
+    }
+    5%{
+        opacity: 0.99;
+    }
+    10%{
+        opacity: 0.94;
+    }
+    15%, 100%{
+        opacity: 0.98;
+    }
+    20%{
+        opacity: 0.96;
+    }
+}
+@media(max-width: 768px){
+    #arcade-cabinet{
+        height: 100vh;
+        max-height: none;
+        border-radius: 0;
+        border: none;
+        padding: 0;
+    }
+    .virtual-controls{
+        height: 160px;
+        padding: 10px 20px;
+    }
+    h1{
+        font-size: 2.5rem;
+    }
+    canvas{
+        border-radius: 0;
+    }
+    #crt-monitor{
+        border: none;
+        border-radius: 0;
+    }
+}
+.hidden{
+    display: none !important;
+}
+.powerup-indicator{
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 15;
+}
+.p-icon{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px solid var(--text-color);
+    opacity: 0.5;
+}
+.p-icon.active{
+    opacity: 1;
+    animation: pulse 0.5s infinite;
+}
