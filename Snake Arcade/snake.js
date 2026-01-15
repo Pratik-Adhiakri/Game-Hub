@@ -129,3 +129,159 @@ class ParticleSystem{
         this.particles = [];
     }
 }
+//i am back
+class Snake{
+    constructor(gridW, gridH){
+        this.reset(gridW, gridH);
+    }
+    reset(gridW, gridH){
+        this.body = [
+            {
+                x:5,
+                y:10
+            },
+            {
+                x:4,
+                y:10
+            },
+            {
+                x:3,
+                y:10
+            }
+        ];
+        this.direction = {x:1, y:0};
+        this.growPending = 0;
+        this.gridW = gridW;
+        this.gridH = gridH;
+        this.color = CONFIG.colors[gameState.theme].snake;
+        this.glow = 0;
+        this.powerupActive = null;
+        this.powerupTimer = 0;
+    }
+    changeDirection(x,y){
+        if(this.direction.x === -x && this.direction.y === -y) return;
+        const goingHorizontal = this.direction.x !== 0;
+        const requestedHorizontal = x !== 0;
+        if(goingHorizontal !== requestedHorizontal){
+            this.nextDirection = {x,y};
+        }
+    }
+    //uhm i am so tiredddd....
+    update(){
+        if(this.isDead) return;
+        this.direction= this.nextDirection;
+        const head = {
+            ...this.body[0]
+        };
+        head.x += this.direction.x;
+        head.y += this.direction.y;
+        if(head.x<0 || head.x>=this.gridW || head.y<0 || head.y >= this.gridH){
+            this.die();
+            return;
+        }
+        for(let i=0;i<this.body.length -1; i++){
+            if(head.x===this.body[i].x && head.y===this.body[i].y){
+                this.die();
+                return;
+            }
+        }
+        this.body.unshift(head);
+        if(this.growPending>0){
+            this.growPending--;
+        } else{
+            this.body.pop();
+        }
+    }
+    grow(amount=1){
+        this.growPending += amount;
+    }
+    die(){
+        this.isDead = true;
+        audio.playerDie();
+        const head =this.getHeadpixelpos();
+        particles.explode(head.x, head.y, this.color, 50);
+        gameState.status = 'GAMEOVER';
+        updateUI();
+    }
+    getHeadpixelpos(){
+        return{
+            x:this.body[0].x * CONFIG.gridSize+ CONFIG.gridSize/2,
+            y: this.body[0].y* CONFIG.gridSize+ CONFIG.gridSize/2 
+        };
+    }
+    //as its hackatime name irl too CR7 is the goat
+    draw(ctx){
+        ctx.fillStyle = this.color;
+        if(gameState.theme==='neon'){
+            ctx.shadowColor = this.color;
+        } 
+        this.body.forEach((segment, index)=>{
+            const x = segment.x * CONFIG.gridSize;
+            const y = segment.y *CONFIG.gridSize;
+            ctx.fillRect(x+1, y+1, CONFIG.gridSize -2, CONFIG.gridSize -2);
+            if(index===9){
+                ctx.fillStyle = '#fff';
+                let ex1,ey1,ex2,ey2;
+                const offset = 4;
+                const size = 4;
+                if(this.direction.x===1){
+                    ex1 = x + 12;
+                    ey1 = y +4;
+                    ex2 = x+12;
+                    ey2 = y+12;
+                } else if(this.direction.x===-1){
+                    ex1 = x+12;
+                    ey1 = y+ 4;
+                    ex2 = x+4;
+                    ey2 = y+ 12;
+                } else if(this.direction.y===1){
+                    ex1 = x+4;
+                    ey1 = y+ 4;
+                    ex2 = x+ 4;
+                    ey2 = y+12;
+                } else{
+                    ex1 = x + 4;
+                    ey1 = y+12;
+                    ex2 = x+ 12;
+                    ey2 = y+ 12;
+                }
+                ctx.fillRect(ex1,ey1,size,size);
+                ctx.fillRect(ex2,ey2, size,size);
+                ctx.fillStyle = this.color;
+                if(gameState.theme==='neon'){
+                    ctx.shadowColor = this.color;
+                }
+            }
+        });
+        ctx.shadowColor = 'transparent';
+        }
+    }
+    //tired af fr
+class Food{
+    constructor(gridW, gridH){
+        this.gridW = gridW;
+        this.gridH = gridH;
+        this.position = {x:0, y:0};
+        this.type = 'normal';
+        this.color = CONFIG.colors[gameState.theme].food;
+        this.spawn(null);
+    }
+    spawn(snakeBody){
+        let valid =false;
+        while(!valid){
+            if(snakeBody){
+                for(let segment of snakeBody){
+                    if(segment.x===this.position.x && segment.y===this.position.y){
+                        valid = false;
+                        break;
+                    }
+                }
+            }
+        }
+        const rand = Math.random();
+        if(rand>0.9) this.type = 'bonus';//1 line simple and short
+        else this.type ='normal';
+        this.color = this.type === 'bonus' ? '#ffff00': CONFIG.colors[gameState.theme].food;
+    }
+    
+}
