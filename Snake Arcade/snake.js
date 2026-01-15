@@ -283,5 +283,134 @@ class Food{
         else this.type ='normal';
         this.color = this.type === 'bonus' ? '#ffff00': CONFIG.colors[gameState.theme].food;
     }
+    draw(ctx){
+        const x= this.position.x * CONFIG.gridSize;
+        const y = this.position.y* CONFIG.gridSize;
+        const center = CONFIG.gridSize/2;
+        ctx.fillStyle = this.color;
+        if(gameState.theme ==='neon'){
+            ctx.shadowColor = this.color;
+        }
+        if(this.type==='normal'){
+            ctx.beginPath();
+            ctx.arc(x + center, y + center, CONFIG.gridSize/2 -2, 0, Math.PI*2);
+            ctx.fill();
+        } else{
+            ctx.beginPath();
+            ctx.moveTo(x + center, y+2);
+            ctx.lineTo(x + CONFIG.gridSize - 2, y+center);
+            ctx.lineTo(x + center, y+CONFIG.gridSize - 2);
+            ctx.lineTo(x+2, y+center);
+            ctx.fill();
+        }
+    }
+}
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let animationId;
+function resize(){
+    const container = document.getElementById('crt-monitor');
+    canvas.height = container.clientHeight;
+    canvas.width = container.clientWidth;
+}
+window.addEventListener('resize', resize);
+resize();
+function getGridDimensions(){
+    return{
+        w: Math.floor(canvas.width/CONFIG.gridSize),
+        h: Math.floor(canvas.height/CONFIG.gridSize)
+    };
+}
+const particles = new ParticleSystem();
+let snake;
+let food;
+
+const keys = {};
+window.addEventListener('keydown', e=>{
+    keys[e.code]=true;
+    if(gameState.status==='Menu'||gameState.status==='GAMEOVER'){
+        audio.playUI();if(e.code==='Enter'||e.code==='Space'){
+            startGame();
+        }
+        return;
+    }
+    if(e.code==='Space'){
+        togglePause();
+        return;
+    }
+    if(gameState.status==='PLAYING'){
+        switch(e.code){
+            case 'ArrowUp':snake.changeDirection(0, -1); break;
+            case 'ArrowDown': snake.changeDirection(0,1); break;
+            case 'ArrowLeft': snake.changeDirection(-1,0); break;
+            case 'ArrowRight': snake.changeDirection(1,0); break;
+        }
+    }
+});
+window.addEventListener('keyup', e=> keys[e.code]=false);
+function blindTouch(id, callback){
+    const el = document.querySelector(id);
+    if(!el) return;
+    el.addEventListener('keyup', e=>keys[e.code]=false);
+    const handle = (e)=>{
+        e.preventDefault();
+        audio.playUI();
+        callback();
+    };
+    el.addEventListener('mousedown', handle);
+    el.addEventListener('touchstart', handle);
+}
+blindTouch('.d-up', ()=>snake && snake.changeDirection(0,-1));
+blindTouch('.d-down', ()=> snake && snake.changeDirection(0,1));
+blindTouch('.d-left', ()=>snake && snake.changeDirection(-1,0));
+blindTouch('.d-right', ()=>snake && snake.changeDirection(1,0));
+blindTouch('#ctrl-action',()=>togglePause());
+blindTouch('#ctrl-dash', ()=>{
+    if(gameState.status==='PLAYING'){
+        snake.update();
+        particles.explode(snake.getHeadpixelpos().x, snake.getHeadpixelpos().y, '#fff', 5);
+    }
+});
+document.getElementById('start-btn').addEventListener('click', startGame);
+document.getElementById('restart-btn').addEventListener('click', startGame);
+document.getElementById('menu-btn').addEventListener('click', showMenu);
+document.getElementById('resume-btn').addEventListener('click', togglePause);
+document.getElementById('quit-btn').addEventListener('click', showMenu);
+document.getElementById('settings-btn').addEventListener('click', showSettings);
+document.getElementById('back-btn').addEventListener('click', showMenu);
+document.getElementById('theme-toggle').addEventListener('click', ()=>{
+    const themes = ['classic', 'neon', 'retro'];
+    idx = (idx+1) % themes.length;
+    gameState.theme = themes[idx];
+    document.getElementById('theme-toggle').innerText = gameState.theme.toLocaleUpperCase();
+    audio.playUI();
+});
+document.getElementById('sound-toggle').addEventListener('click', ()=>{
+    gameState.soundEnabled = !gameState.soundEnabled;
+    document.getElementById('sound-toggle').innerText = gameState.soundEnabled ? "ON":"OFF";
+    audio.playUI();
+});
+function initGame(){
+    const dims = getGridDimensions();
+    snake = new Snake(dims.w, dims.h);
+    food = new Food(dims.w, dims.h);
+    snake.color = CONFIG.colors[gameState.theme].snake;
+    food.color = CONFIG.colors[gameState.theme].food;
     
+    gameState.score = 0;
+    gameState.level = 1;
+    gameState.speed = CONFIG.baseSpeed;
+    particles.reset();
+    updateHUD();
+}
+// thid is deadass js
+function startGame(){
+    initGame();
+    gameState.status = 'PLAYING';
+    gameState.lastTime = performance.now();
+    gameState.tickAccumulator = 0;
+    document.querySelectorAll('.ui-layer'.forEach(el =>el.classList.remove('active')));
+    document.getElementById('high-score-display').innerText = gameState.highScore;
+    if(!animationId) loop(performance.now());
+    audio.playPowerup();
 }
