@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snake Arcade</title>
+    <link rel="stylesheet" href="snake.css">
 </head>
 <body>
     <!--lets start another game yay-->
-    <div class="arcade-cabinet">
-        <div class="crt-monitor">
+    <div id="arcade-cabinet" class="arcade-cabinet">
+        <div id="crt-monitor" class="crt-monitor">
             <div class="stats-hud" id="hud">
                 <div class="stat-box">SCORE: <span id="score-display">0</span></div>
                 <div class="stat-box">HIGH: <span id="high-score-display">0</span></div>
@@ -17,6 +18,15 @@
 
             <div class="powerup-indicator" id="powerup-hud">
 
+            </div>
+            
+            <canvas id="gameCanvas"></canvas>
+
+            <div id="game-over" class="ui-layer">
+                <h1>GAME OVER</h1>
+                <h2>SCORE: <span id="final-score">0</span></h2>
+                <button class="btn" id="restart-btn">TRY AGAIN</button>
+                <button class="btn" id="menu-btn">MENU</button>
             </div>
 
             <div id="main-menu" class="ui-layer active">
@@ -73,5 +83,6 @@
             </div>
         </div>
     </div>
+    <script src="snake.js"></script>
 </body>
 </html>

@@ -25,9 +25,9 @@ const CONFIG = {
     }
 };
 let gameState = {
-    status: 'Menu',
+    status: 'MENU',
     score: 0,
-    hoghScore: localStorage.getItem('snake_hoghscore')||0,
+    highScore: localStorage.getItem('snake_highscore')||0,
     level: 1,
     theme: 'neon',
     soundEnabled: true,
@@ -45,10 +45,11 @@ class AudioController{
     playTone(freq,type,duration,slide=0){
         if(!gameState.soundEnabled||this.ctx.state ==='suspended'){
             if(!gameState.soundEnabled) return;
+            this.ctx.resume();
         }
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-        osc.type = this.type;
+        osc.type = type;
         osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
         if(slide!==0){
             osc.frequency.linearRampToValueAtTime(0.01, this.ctx.currentTime + duration);
@@ -58,7 +59,7 @@ class AudioController{
         osc.connect(gain);
         gain.connect(this.masterGain);
         osc.start();
-        osc.stop(this.ctx.currentTime_duration);
+        osc.stop(this.ctx.currentTime + duration);
     }
     playEat(){
         this.playTone(600, 'square', 0.1, 200);
@@ -81,7 +82,7 @@ class AudioController{
 const audio = new AudioController();
 //js is tough
 class Particle{
-    constructor(x,y ,color, speed, lefe){
+    constructor(x,y ,color, speed, life){
         this.x = x;
         this.y = y;
         this.color = color;
@@ -150,6 +151,7 @@ class Snake{
             }
         ];
         this.direction = {x:1, y:0};
+        this.nextDirection = {x:1, y:0};
         this.growPending = 0;
         this.gridW = gridW;
         this.gridH = gridH;
@@ -197,7 +199,7 @@ class Snake{
     }
     die(){
         this.isDead = true;
-        audio.playerDie();
+        audio.playDie();
         const head =this.getHeadpixelpos();
         particles.explode(head.x, head.y, this.color, 50);
         gameState.status = 'GAMEOVER';
@@ -269,6 +271,9 @@ class Food{
     spawn(snakeBody){
         let valid =false;
         while(!valid){
+            this.position.x = Math.floor(Math.random() * this.gridW);
+            this.position.y = Math.floor(Math.random() * this.gridH);
+            valid = true;
             if(snakeBody){
                 for(let segment of snakeBody){
                     if(segment.x===this.position.x && segment.y===this.position.y){
@@ -328,7 +333,7 @@ let food;
 const keys = {};
 window.addEventListener('keydown', e=>{
     keys[e.code]=true;
-    if(gameState.status==='Menu'||gameState.status==='GAMEOVER'){
+    if(gameState.status==='MENU'||gameState.status==='GAMEOVER'){
         audio.playUI();if(e.code==='Enter'||e.code==='Space'){
             startGame();
         }
@@ -380,6 +385,7 @@ document.getElementById('settings-btn').addEventListener('click', showSettings);
 document.getElementById('back-btn').addEventListener('click', showMenu);
 document.getElementById('theme-toggle').addEventListener('click', ()=>{
     const themes = ['classic', 'neon', 'retro'];
+    let idx = themes.indexOf(gameState.theme);
     idx = (idx+1) % themes.length;
     gameState.theme = themes[idx];
     document.getElementById('theme-toggle').innerText = gameState.theme.toLocaleUpperCase();
@@ -409,8 +415,119 @@ function startGame(){
     gameState.status = 'PLAYING';
     gameState.lastTime = performance.now();
     gameState.tickAccumulator = 0;
-    document.querySelectorAll('.ui-layer'.forEach(el =>el.classList.remove('active')));
+    document.querySelectorAll('.ui-layer').forEach(el =>el.classList.remove('active'));
     document.getElementById('high-score-display').innerText = gameState.highScore;
     if(!animationId) loop(performance.now());
     audio.playPowerup();
 }
+function showMenu(){
+    gameState.status = 'MENU';
+    document.querySelectorAll('.ui-layer').forEach(el => el.classList.remove('active'));
+    document.getElementById('main-menu').classList.add('active');
+}
+function showSettings(){
+    document.querySelectorAll('.ui-layer').forEach(el => el.classList.remove('active'));
+    document.getElementById('settings-menu').classList.add('active');
+}
+//i am back now i have got so many things to do
+function togglePause(){
+    if(gameState.status==='PLAYING'){
+        gameState.status = 'PAUSED';
+        document.getElementById('pause-menu').classList.add('active');
+    } else if(gameState.status==='PAUSED'){
+        gameState.status = 'PLAYING';
+        document.getElementById('pause-menu').classList.remove('active');
+        gameState.lastTime = performance.now();
+    }
+}
+function updateHUD(){
+    document.getElementById('score-display').innerText=gameState.score;
+    document.getElementById('level-display').innerText=gameState.level;
+}
+function updateUI(){
+    if(gameState.status==='GAMEOVER'){
+        document.getElementById('final-score').innerText = gameState.score;
+        document.getElementById('game-over').classList.add('active');
+        if(gameState.score>gameState.highScore){
+            gameState.highScore = gameState.score;
+            localStorage.setItem('snake_highscore',gameState.highScore);
+            document.getElementById('high-score-display').innerText = gameState.highScore;
+        }
+    }
+}
+
+//boring af
+function loop(timestamp){
+    const deltaTime = timestamp - gameState.lastTime;
+    gameState.lastTime = timestamp;
+    if(gameState.status==='PLAYING'){
+        gameState.tickAccumulator += deltaTime;
+        while(gameState.tickAccumulator>=gameState.speed){
+            gameState.tickAccumulator -= gameState.speed;
+            update();
+        }
+        particles.update();
+    }
+    render();
+    animationId = requestAnimationFrame(loop);
+}
+function update(){
+    snake.update();
+    if(snake.isDead) return;
+    const head = snake.body[0];
+    if(head.x===food.position.x&&head.y===food.position.y){
+        const points = food.type==='bonus'?50:10;
+        gameState.score +=points;
+        audio.playEat();
+        const pixelPos = snake.getHeadpixelpos();
+        particles.explode(pixelPos.x,pixelPos.y,food.color,15);
+        snake.grow(food.type==='bonus'?2:1);
+        food.spawn(snake.body);
+        if(gameState.score%50===0){
+            gameState.level++;
+            gameState.speed = Math.max(CONFIG.minSpeed, CONFIG.baseSpeed - (gameState.level * CONFIG.speedDecrement));
+            audio.playPowerup();
+        }
+        updateHUD();
+    }
+}
+function render(){
+    ctx.fillStyle = CONFIG.colors[gameState.theme].bg;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    if(gameState.theme==='retro'){
+        ctx.strokeStyle = CONFIG.colors[gameState.theme].grid;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for(let x=0;x<=canvas.width;x+=CONFIG.gridSize){
+            ctx.moveTo(x,0);
+            ctx.lineTo(x,canvas.height);
+        }
+        for(let y=0;y<=canvas.height;y+=CONFIG.gridSize){
+            ctx.moveTo(0,y);
+            ctx.lineTo(canvas.width,y);
+        }
+        ctx.stroke();
+    }
+    if(gameState.status==='PLAYING'||gameState.status==='PAUSED'){
+        food.draw(ctx);
+        snake.draw(ctx);
+        particles.draw(ctx);
+    }
+}
+resize();
+showMenu();
+const konami = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','KeyB','KeyA'];
+let konamiIndex = 0;
+window.addEventListener('keydown',(e)=>{
+    if(e.code===konami[konamiIndex]){
+        konamiIndex++;
+        if(konamiIndex===konami.length){
+            alert('ACTIVATED GOD MODE!!!(kidding but here is 1000points)');
+            gameState.score +=1000;
+            updateHUD();
+            konamiIndex=0;
+        }
+    }else{
+        konamiIndex = 0;
+    }
+});

@@ -111,7 +111,7 @@ h1{
     color: var(--primary);
     text-transform: uppercase;
     letter-spacing: 5px;
-    animation: neonPluse 1.5s i;
+    animation: neonPulse 1.5s infinite;
 }
 h2{
     font-size: 2rem;
@@ -232,6 +232,10 @@ h2{
     text-align: center;
 }
 /*lets do the coolest part, animation*/
+@keyframes neonPulse {
+    0%, 100% { text-shadow: 0 0 10px var(--primary), 0 0 20px var(--primary); }
+    50% { text-shadow: 0 0 5px var(--primary), 0 0 10px var(--primary); }
+}
 @keyframes flicker{
     0%{
         opacity: 0.97;
