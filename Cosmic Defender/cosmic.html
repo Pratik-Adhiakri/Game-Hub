@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Defender</title>
+    <link rel="stylesheet" href="cosmic.css">
+</head>
+<body>
+    <!--lets go 5th game yay-->
+    <div id="game-container">
+        <div class="background-grid"></div>
+        <canvas id="gamecanvas"></canvas>
+
+        <div id="hud" class="hud-panel top-left">
+            <div class="stat-block">
+                <span class="stat-label">Score</span>
+                <span class="stat-value" id="score-display">0</span>
+            </div>
+            <div class="stat-block">
+                <span class="stat-label">Wave</span>
+                <span class="stat-value" id="wave-display">1</span>
+            </div>
+        </div>
+
+        <div class="hud-panel top-right">
+            <div class="stat-block">
+                <span class="stat-label">Credits</span>
+                <span class="stat-value" style="color: var(--warning);" id="credits-display">0</span>
+            </div>
+        </div>
+        <div class="hud-panel bottom-center">
+            <div class="stat-block" style="width: 100%;">
+                <span class="stat-label">Base Integrity</span>
+                <div class="health-bar-container">
+                    <div id="health-bar" class="health-bar-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="wave-announcement" class="wave-text">WAVE 1</div>
+
+        <div id="start-screen" class="ui-screen visible">
+            <h1>Cosmic Defender</h1>
+            <h2>Outpost Alpha</h2>
+            <button class="button" onclick="game.startGame()">Start?</button>
+        </div>
+        <div id="game-over-screen" class="ui-screen">
+            <h1 style="color: var(--danger);">Critical Failure (noob)</h1>
+            <h2>Outpost Destroyed (noob again)</h2>
+            <div style="margin-bottom: 20px;">
+                <span class="stat-label">Final Score</span>
+                <span class="stat-value" id="final-score">0</span>
+            </div>
+            <button class="button" onclick="game.resetGame()">Reaboot?</button>
+        </div>
+        <div id="shop-screen" class="ui-screen">
+            <h1>Armory</h1>
+            <div style="margin-bottom: 20px;">Credits Available: <span is="shop-credits" style="
+            color: var(--warning);">0</span></div>
+            <div class="shop-grid">
+                <div class="shop-item">
+                    <h3>Rapid Fire</h3>
+                    <p>Wanna increase the projectile fire rate? buy this! (+15%)</p>
+                    <div class="shop-cost" id="cost-rate">100</div>
+                    <button class="upgrade-btn" id="btn-rate" onclick="game.shop.buyUpgrade('fireRate')">Purchase</button>
+                </div>
+
+                <div class="shop-item">
+                    <h3>Plasma Damage</h3>
+                    <p>Buy this if you wanna increase the per shot damage by 1</p>
+                    <div class="shop-cost" id="cost-damage">200</div>
+                    <button class="upgrade-btn" id="btn-damage" onclick="game.shop.buyUpgrade('damage')">Purchase</button>
+                </div>
+
+                <div class="shop-item">
+                    <h3>HULL Repair</h3>
+                    <p>Will restore 25% of base health</p>
+                    <div class="shop-cost" id="cost-heal">150</div>
+                    <button class="upgrade-btn" id="btn-heal" onclick="game.shop.buyUpgrade('heal')">Purchase</button>
+                </div>
+                <div class="shop-item">
+                    <h3>Projectile Speed Booster</h3>
+                    <p>Helps to make shots travel 20% faster</p>
+                    <div class="shop-cost" id="cost-speed">250</div>
+                    <button class="upgrade-btn" id="btn-speed" onclick="game.shop.buyUpgrade('speed')">Purchase</button>
+                </div>
+
+                <div class="shop-item">
+                    <h3>Multi Shot</h3>
+                    <p>Adds an additional canon barrel</p>
+                    <div class="shop-cost" id="cost-multi">500</div>
+                    <button class="upgrade-btn" id="btn-multi" onclick="game.shop.buyUpgrade('multiShot')">Purchase</button>
+                </div>
+
+                <div class="shop-item">
+                    <h3>Base Aromor</h3>
+                    <p>Increases maximum health by 20.</p>
+                    <div class="shop-cost" id="cost-maxhp">300</div>
+                    <button class="upgrade-btn" id="btn-maxhp" onclick="game.shop.buyUpgrade('maxHealth')">Purchase</button>
+                </div>
+
+            </div>
+            <button class="button" style="margin-top: 30px;" onclick="game.startNextWave()">Start Next Wave</button>
+        </div>
+    </div>
+    <!--finally done uff-->
+
+    <script src="cosmic.js"></script>
+</body>
+</html>
