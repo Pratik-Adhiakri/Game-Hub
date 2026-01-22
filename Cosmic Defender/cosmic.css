@@ -1,0 +1,215 @@
+:root{
+    --primary: #00f3ff;
+    --danger: #ff0055;
+    --warning: #ffaa00;
+    --success: #00ff66;
+    --bgdark: #050510;
+    --bglight:#1a1a2e;
+    --ui-font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+body{
+    margin: 0;
+    padding: 0;
+    background-color: var(--bgdark);
+    color: white;
+    height: 100vh;
+    width: 100vw;
+    font-family: var(--ui-font);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+#game-container{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 1200px;
+    max-height: 900px;
+    background-color: black;
+    border: 2px solid var(--primary);
+    overflow: hidden;
+}
+canvas{
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+}
+.ui-screen{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 5, 16, 0.9);
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.ui-screen.visible{
+    opacity: 1;
+    pointer-events: all;
+}
+h1{
+    font-size: 4rem;
+    margin-bottom: 20px;
+    color: var(--primary);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 10px;
+}
+h2{
+    font-size: 2rem;
+    color: white;
+    margin-bottom: 40px;
+    font-weight: 300;
+}
+.button{
+    color: var(--primary);
+    background: transparent;
+    border: 2px solid var(--primary);
+    margin: 10px;
+    border-radius: 4px;
+    font-size: 1.5rem;
+    padding: 15px 50px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+.button:hover{
+    background: var(--primary);
+    color: black;
+}
+.hud-panel{
+    position: absolute;
+    padding: 20px;
+    pointer-events: none;
+    display: flex;
+    gap: 20px;
+}
+.top-left{
+    top: 0;
+    left: 0;
+}
+.top-right{
+    top: 0;
+    right: 0;
+    text-align: right;
+}
+.bottom-center{
+    bottom: 20px;
+    left: 50%;
+    width: 60%;
+    transform: translateX(-50%);
+}
+.stat-block{
+    display: flex;
+    flex-direction: column;
+}
+.stat-label{
+    color: #888;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.stat-value{
+    color: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+.health-bar-container{
+    width: 100%;
+    height: 10px;
+    background-color: #333;
+    border-radius: 5px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+.health-bar-fill{
+    height: 100%;
+    background-color: var(--danger);
+    width: 100%;
+    transition: width 0.2s ease;
+}
+.wave-text{
+    font-size: 3rem;
+    color: var(--warning);
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+.wave-text.show{
+    opacity: 1;
+}
+#shop-screen{
+    background-color: rgba(5, 5, 16, 0.95);
+}
+.shop-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 1000px;
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: all 0.2s;
+}
+.shop-item:hover{
+    border-color: var(--success);
+    background: rgba(0, 255, 102, 0.05);
+}
+.shop-item h3{
+    color: var(--success);
+    margin: 0 0 10px 0;
+}
+.shop-item p{
+    color: #ccc;
+    font-size: 0.89rem;
+    height: 40px;
+}
+.shop-cost{
+    color: var(--warning);
+    font-size: 1.2rem;
+    margin: 15px 0;
+    font-weight: bold;
+}
+.upgrade-btn{
+    background: transparent;
+    border: 1px solid var(--success);
+    border-radius: 8px;
+    padding: 20px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: al l 0.2s;
+}
+.upgrade-btn:hover{
+    background: var(--success);
+    color: black;
+}
+.upgrade-btn:disabled{
+    border-color: #444;
+    color: #444;
+    background: transparent;
+    cursor: not-allowed;
+}
+.background-grid{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.32;
+}
