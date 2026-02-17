@@ -356,3 +356,118 @@ class Player{
    }
 }
 //this much for now i am gonna come later
+class ShopSystem{
+    constructor(){
+        this.costs ={
+            fireRate:100,
+            damage:200,
+            heal:150,
+            bulletSpeed:80,
+            multiShot:500,
+            maxHealth:300
+        };
+        this.levels ={
+            fireRate:0,
+            damage:0,
+            bulletSpeed:0,
+            multiShot:0,
+            maxHealth:0
+        };
+    }
+    reset(){
+        this.levels ={
+            fireRate:0,
+            damage:0,
+            bulletSpeed:0,
+            multiShot:0,
+            maxHealth:0
+        };
+    }
+    reset(){
+        this.levels={
+            fireRate:0,
+            damage:0,
+            bulletSpeed:0,
+            multiShot:0,
+            maxHealth:0
+        };
+        this.costs={
+            fireRate:100,
+            damage:200,
+            heal:150,
+            bulletSpeed:80,
+            multiShot:500,
+            maxHealth:300
+        };
+        buyUpgrade(type){
+            const cost =this.costs[type];
+            if(game.credits>=cost){
+                game.credits -=cost;
+                game.audio.playupgradesound();
+                switch(type){
+                    case 'fireRate':
+                        game.player.fireRate = Math.max(5,game.player.fireRate*0.05);
+                        this.costs.fireRate =Math.floor(this.costs.fireRate*1.5);
+                        break;
+                    case 'damage':
+                        game.player.damage +=5;
+                        this.costs.damage =Math.floor(this.costs.damage*1.4);
+                        break;
+                    case 'heal':
+                        game.player.health = Math.min(game.player.health +(game.player.maxHealth*0.25),game.player.maxHealth);
+                        this.costs.heal = Math.floor(this.costs.heal*1.2);
+                        game.updateHealthUi();
+                        break;
+                    case 'bulletSpeed':
+                        game.player.projectileSpeed +=1.2;
+                        this.costs.bulletSpeed=Math.floor(this.costs.bulletSpeed*1.3);
+                        break;
+                    case 'multiShot':
+                        game.player.multiShot++;
+                        if(game.player.multiShot>=2)this.costs.multiShot =99999;
+                        else this.costs.multiShot=1500;
+                        break;
+                    case 'maxHealth':
+                        game.player.maxHealth +=20;
+                        game.player.health +=20;
+                        this.costs.maxHealth=Math.floor(this.costs.maxHealth*1.3);
+                        game.updateHealthUi();
+                        break;
+                }
+                this.updateButtons();
+                game.updateCreditsUi();
+            }
+        }
+    }
+        updateButtons(){
+            document.getElementById('cost-rate').innerText=this.costs.fireRate;
+            document.getElementById('cost-damage').innerText=this.costs.damage;
+            document.getElementById('cost-heal').innerText = this.costs.heal;
+            document.getElementById('cost-speed').innerText =this.costs.bulletSpeed;
+            if(game.player.multiShot>=2){
+                document.getElementById('cost-multi').innerText = "MAX";
+                document.getElementById('btn-multi').disabled =true;
+            }else{
+                document.getElementById('cost-multi').innerText=this.costs.multiShot;
+            }
+            document.getElementById('cost-maxhp').innerText=this.costs.maxHealth;
+            this.checkAffordability();
+        }
+        checkAffordability(){
+            const ids = ['rate','damage','heal','speed','multi','maxhp'];
+            const types =['fireRate','damage','heal','bulletSpeed','multiShot','maxHealth'];
+            ids.forEach((ids,index)=>{
+                const btn = document.getElementById('btn-'+ id);
+                const type =types[index];
+                if(type==='multiShot'&&game.player.multiShot>=2)return;
+                if(game.credits<this.costs[type]){
+                    btn.disabled=true;
+                    btn.style.borderColor ='#444';
+                }else{
+                    btn.disabled = false;
+                    btn.style.borderColor = 'var(--success)';
+                }
+            });
+            document.getElementById('shop-credits').innerText=game.credits;
+        }
+    }
