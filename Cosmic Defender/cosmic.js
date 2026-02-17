@@ -292,5 +292,67 @@ class Player{
     }
     update(mouseX,mouseY){
         const centerX = game.canvas.width/2;
+        const centerY =game.canvas.height/2;
+        this.rotation =Math.atan2(mouseY-centerY,mouseX-centerX);
+        if(this.fireCooldown>0){
+            this.fireCooldown--;
+        }
+        if(game.input.mouseDown&&this.fireCooldown===0){
+            this.shoot();
+        }
     }
+    shoot(){
+        const centerX = game.canvas.width/2;
+        const centerY = game.canvas.height/2;
+        const muzzleX =centerX+Math.cos(this.rotation)*30;
+        const muzzleY = centerY+Math.sin(this.rotation)*30;
+        const basedirection = new vector2(Math.cos(this.rotation),Math.sin(this.rotation));
+        game.projectile.push(new Projectile(muzzleX,muzzleY,basedirection,this.projectileSpeed,this.damage,this.color));
+        if(this.multiShot>0){
+            const spread =0.2;
+            const leftDir =new vector2(Math.cos(this.rotation-spread),Math.sin(this.rotation -spread));
+            game.projectile.push(new Projectile(muzzleX,muzzleY,leftDir,this.projectileSpeed,this.damage,this.color));
+            if(this.multiShot>1){
+                const rightDir = new vector2(Math.cos(this.rotation+spread),Math.sin(this.rotation+spread));
+                game.projectile.push(new Projectile(muzzleX,muzzleY,rightDir,this.projectileSpeed,this.damage,this.color));
+            }
+        }
+        this.fireCooldown=this.fireRate;
+        game.audio.playshootsound();
+    }
+   takeDamage(amount){
+    this.health -=amount;
+    game.updateHealthUi();
+    game.createFloatingText(game.canvas.width/2,game.canvas.height/2-40,"-"+amount,'#ff0000');
+    if(this.health<=0){
+        game.gameOver();
+    }
+   }   
+   draw(ctx){
+    const cx = game.canvas.width/2;
+    const cy =game.canvas.height/2;
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.rotate(this.rotation);
+    ctx.fillStyle = '#111';
+    ctx.beginPath();
+    ctx.arc(0,0,25,0,Math.PI*2);
+    ctx.fill();
+    ctx.strokeStyle =this.color;
+    ctx.lineWidth =3;
+    ctx.stroke();
+    ctx.fillStyle = this.color;
+    ctx.fillRect(15,-5,20,10);
+    if(this.multiShot>0){
+        ctx.fillRect(10,-15,15,6);
+    }
+    if(this.multiShot>1){
+        ctx.fillRect(10,9,15,6);
+    }
+    ctx.beginPath();
+    ctx.arc(0,0,10,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+   }
 }
+//this much for now i am gonna come later
