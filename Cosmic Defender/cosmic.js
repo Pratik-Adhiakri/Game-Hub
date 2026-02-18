@@ -471,3 +471,129 @@ class ShopSystem{
             document.getElementById('shop-credits').innerText=game.credits;
         }
     }
+    class InputManager{
+        constructor(){
+            this.mouseX =0;
+            this.mouseY =0;
+            this.mouseDown=false;
+            window.addEventListener('mousemove',(e)=>{
+                const rect =game.canvas.getBoundingClientRect();
+                this.mouseX= e.clientX-rect.left;
+                this.mouseY = e.clientY -rect.top;
+            });
+            window.addEventListener('mousedown',(e)=>{
+                this.mouseDown=true;
+            });
+            window.addEventListener('mouseup',(e)=>{
+                this.mouseDown = false;
+            });
+            window.addEventListener('resize',()=>{
+                game.resizeCanvas();
+            });
+        }
+    }
+class Game{
+    constructor(){
+        this.canvas = document.getElementById('gameCanvas');
+        this.ctx =this.canvas.getContext('2d');
+        this.audio = new AudioSynthesizer();
+        this.input = new InputManager();
+        this.shop =new ShopSystem();
+        this.player = new Player();
+        this.state ='MENU';
+        this.enemies =[];
+        this.projectiles = [];
+        this.particles =[];
+        this.FloatingTexts =[];
+        this.score =0;
+        this.credits=0;
+        this.wave = 1;
+        this.waveTimer =0;
+        this.waveInProgress = false;
+        this.resizeCanvas();
+        this.lastTime = 0;
+        requestAnimationFrame((timestamp)=>this.loop(timestamp));
+    }
+    resizeCanvas(){
+        this.canvas.width = this.canvas.parentElement.clientWidth;
+        this.canvas.height = this.canvas.parentElement.clientHeight;
+    }
+    startGame(){
+        this.state = 'PLAYING';
+        this.player.reset();
+        this.shop.reset();
+        this.score =0;
+        this.credits =0;
+        this.wave =1;
+        this.enemies =[];
+        this.projectiles = [];
+        this.particles =[];
+        this.FloatingTexts = [];
+        document.getElementById('start-screen').classList.remove('visible');
+        document.getElementById('game-over-screen').classList.remove('visible');
+        document.getElementById('shop-screen').classList.remove('visible');
+        this.updateCreditsUi();
+        this.updateScoreUi();
+        this.updateHealthUi();
+        this.startWave();
+    }
+    startWave(){
+        this.waveInProgress = true;
+        if(this.wave<3){
+            this.enemiesToSpawn = 5+(this.wave*2);
+        }else{
+            this.enemiesToSpawn =10+ Math.floor(Math.pow(this.wave,1.8));
+        }
+        this.spawnTimer = 0;
+        const waveText = "WAVE"+ this.wave;
+        waveText.classList.add('show');
+        setTimeout(()=>waveText.classList.remove('show'),2000);
+        document.getElementById('wave-display').innerText =this.wave;
+    }
+    startNextWave(){
+        document.getElementById('shop-screen').classList.remove('visible');
+        this.state = 'PLAYING';
+        this.wave++;
+        this.startWave();
+    }
+    openShop(){
+        this.state ='SHOP';
+        this.shop.updateButtons();
+        document.getElementById('shop-screen').classList.add('visible');
+    }
+    resetGame(){
+        document.getElementById('game-over-screen').classList.remove('visible');
+        document.getElementById('start-screen').classList.add('visible');
+        this.state ='MENU';
+    }
+    gameOver(){
+        this.state ='GAMEOVER';
+        document.getElementById('final-score').innerText=this.score;
+        document.getElementById('game-over-screen').classList.add('visible');
+        this.audio.playexplosionsound();
+    }
+    addScore(amount){
+        this.score += amount;
+        this.updateScoreUi();
+    }
+    addCredits(amount){
+        this.credits +=amount;
+        this.updateCreditsUi();
+        this.createFloatingText(100,50,"+" + amount + " CR", '#ffaa00');
+    }
+    updateScoreUi(){
+        document.getElementById('score-display').innerText = this.score;
+    }
+    updateCreditsUi(){
+        document.getElementById('credits-display').innerText =this.credits;
+    }
+    updateHealthUi(){
+        const percent =(this.player.health/this.player.maxHealth)*100;
+        const bar = document.getElementById('health-bar');
+        bar.style.width=Math.max(0,percent)+ '%';
+       if(percent>60) bar.style.backgroundColor='var(--success)';
+       else if(percent>30) bar.style.backgroundColor= 'var(--warning)';
+       else bar.style.backgroundColor='var(--danger)';
+    }
+    
+}
