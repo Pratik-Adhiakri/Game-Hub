@@ -595,5 +595,73 @@ class Game{
        else if(percent>30) bar.style.backgroundColor= 'var(--warning)';
        else bar.style.backgroundColor='var(--danger)';
     }
+    //lets do it again
+    createExplosion(x,y,color,count){
+        for(let i=0;i<count;i++){
+            this.particles.push(new Particle(x,y,color,Math.random()*3+2,30));
+        }
+    }
+    createFloatingText(x,y,text,color){
+        this.FloatingTexts.push(new FloatingText(x,y,text,color));
+    }
+    spawnEnemy(){
+        const rand =Math.random();
+        let type ='normal';
+        if(this.wave>2&&rand>0.8) type='fast';
+        if(this.wave>4&&rand>0.9) type ='tank';
+        this.enemies.push(new Enemy(type,this.wave));
+    }
+    update(){
+        if(this.state==='PLAYING'){
+            this.player.update(this.input.mouseX,this.input.mouseY);
+            if(this.waveInProgress){
+                if(this.enemiesToSpawn>0){
+                    this.spawnTimer--;
+                    if(this.spawnTimer<=0){
+                        this.spawnEnemy();
+                        this.enemiesToSpawn--;
+                        this.spawnTimer= Math.max(10,100-(this.wave*10));
+                    }
+                }else if(this.enemies.length===0){
+                    this.waveInProgress = false;
+                    setTimeout(()=>this.openShop(),1000);
+                }
+            }
+            for(let i=this.projectiles.length-1;i>=0;i++){
+                const p=this.projectiles[i];
+                p.update();
+                if(!p.active){
+                    this.projectiles.splice(i,1);
+                    continue;
+                }
+                for(let j=this.enemies.length-1;j>=0;j--){
+                    const e=this.enemies[j];
+                    const dist =p.position.subtract(e.position).magnitude();
+                    if(dist<e.radius+5){
+                        e.takeDamage(p.damage);
+                        p.active=false;
+                        game.audio.playhitsound();
+                        game.createExplosion(p.position.x,p.position.y,'#fff',5);
+                        break;
+                    }
+                }
+            }
+            for(let i=this.enemies.length-1;i>=0;i--){
+                const e=this.enemies[i];
+                e.update();
+                if(!e.active){
+                    this.enemies.splice(i,1);
+                }
+            }
+        }
+        for(let i=this.particles.length-1;i>=0;i--){
+            this.particles[i].update();
+            if(this.particles[i].life<=0)this.particles.splice(i,1);
+        }
+        for(let i=this.FloatingTexts.length-1;i>=0;i--){
+            this.FloatingTexts[i].update();
+            if(this.FloatingTexts[i].life<=0)this.FloatingTexts.splice(i,1);
+        }
+    }
     
 }
