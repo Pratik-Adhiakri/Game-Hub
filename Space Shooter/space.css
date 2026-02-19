@@ -99,4 +99,13 @@ button:hover{
 button:active{
     transform: scale(0.95);
 }
+a{
+    text-decoration: none;
+    color: #00d2ff;
+}
+.a{
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
 /*finnally done yay*/

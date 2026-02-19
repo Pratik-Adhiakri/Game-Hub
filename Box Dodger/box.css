@@ -107,3 +107,12 @@ button:hover{
 .secondary-btn:hover{
     background-color: #6e6e70;
 }
+a{
+    color: #e94560;
+    text-decoration: none;
+}
+.a{
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
