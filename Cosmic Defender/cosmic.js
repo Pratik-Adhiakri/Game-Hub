@@ -1,11 +1,16 @@
 // i am back now lets make and do the logic
 class AudioSynthesizer{
     constructor(){
-        this.context = new (window.AudioContext || window.webkitAudioContext)();
-        this.masterVolume = 0.3;
+        this.context = null;
+        try {
+            this.context = new (window.AudioContext || window.webkitAudioContext)();
+            this.masterVolume = 0.3;
+        } catch(e) { console.error(e); }
     }
     playshootsound(){
-        if(this.context.state==='suspended') this.context.resume();
+        try {
+            if(!this.context) return;
+            if(this.context.state==='suspended') this.context.resume();
             const oscillator = this.context.createOscillator();
             const gainNode = this.context.createGain();
             oscillator.type = 'square';
@@ -17,8 +22,13 @@ class AudioSynthesizer{
             gainNode.connect(this.context.destination);
             oscillator.start();
             oscillator.stop(this.context.currentTime + 0.1);
+        } catch (e) {
+            console.error(e);
+        }
     }
      playexplosionsound(){
+        try {
+        if(!this.context) return;
         if(this.context.state==='suspended') this.context.resume();
             const oscillator = this.context.createOscillator();
             const gainNode = this.context.createGain();
@@ -31,9 +41,14 @@ class AudioSynthesizer{
             gainNode.connect(this.context.destination);
             oscillator.start();
             oscillator.stop(this.context.currentTime+ 0.3);
+        } catch (e) {
+            console.error(e);
+        }
     }
         playhitsound(){
-            if(this.context.state==='suspended')this.context.resume();
+            try {
+                if(!this.context) return;
+                if(this.context.state==='suspended')this.context.resume();
                 const oscillator =this.context.createOscillator();
                 const gainNode =this.context.createGain();
                 oscillator.type = 'sine';
@@ -43,8 +58,13 @@ class AudioSynthesizer{
                 gainNode.connect(this.context.destination);
                 oscillator.start();
                 oscillator.stop(this.context.currentTime+0.1);
+            } catch (e) {
+                console.error(e); 
             }
-            playupgradesound(){
+        }
+        playupgradesound(){
+            try {
+                if(!this.context) return;
                 if(this.context.state==='suspended') this.context.resume();
                 const oscillator = this.context.createOscillator();
                 const gainNode =this.context.createGain();
@@ -57,6 +77,9 @@ class AudioSynthesizer{
                 gainNode.connect(this.context.destination);
                 oscillator.start();
                 oscillator.stop(this.context.currentTime+0.3);
+                } catch (e) {
+                     console.error(e);
+                }
             }
             //well this wasnt necessary but why not it is game hehe
 }
@@ -69,7 +92,7 @@ class vector2{
         return new vector2(this.x+other.x,this.y+other.y);
     }
     subtract(other){
-        return new vector2(this.x-other.x,this.y=other.y);
+        return new vector2(this.x-other.x,this.y-other.y);
     }
     multiply(scalar){
         return new vector2(this.x*scalar,this.y*scalar);
@@ -147,7 +170,7 @@ class Projectile{
         });
         if(this.trail.length>5)this.trail.shift();
         this.position = this.position.add(this.direction.multiply(this.speed));
-        if(this.position.x<0||this.position.x>game.canvas.width||this.position.y<0||this.position.y<game.canvas.height){
+        if(this.position.x<0||this.position.x>game.canvas.width||this.position.y<0||this.position.y>game.canvas.height){
             this.active =false;
         }
     }
@@ -204,7 +227,7 @@ class Enemy{
             this.health = (8+(waveNumber*1.5))*difficultyMultiplier;
             this.color ='#ff0055';
             this.radius=10;
-            this.scoreValue = 20;
+            this.scoreValue = 30;
             this.creditsValue= 5;
             this.damage=10;
         }else if(this.type==='tank'){
@@ -213,8 +236,16 @@ class Enemy{
             this.color ='#aa00ff';
             this.radius =15;
             this.scoreValue =30;
-            this.creditsValue=10;
+            this.creditsValue=20;
             this.damage = 15;
+        }else{
+            this.speed=(1.2+(waveNumber*0.1))*difficultyMultiplier;
+            this.health = (15+(waveNumber*2))*difficultyMultiplier;
+            this.color ='#00ff66';
+            this.radius =12;
+            this.scoreValue =10;
+            this.creditsValue=10;
+            this.damage = 5;
         }
     }
     update(){
@@ -233,7 +264,7 @@ class Enemy{
     takeDamage(amount){
         this.health -=amount;
         game.createFloatingText(this.position.x,this.position.y-10,Math.floor(amount), '#fff');
-        if(this.health<=0){
+        if(this.health<=0 && this.active){
             this.active = false;
             game.addScore(this.scoreValue);
             game.addCredits(this.creditsValue);
@@ -307,14 +338,14 @@ class Player{
         const muzzleX =centerX+Math.cos(this.rotation)*30;
         const muzzleY = centerY+Math.sin(this.rotation)*30;
         const basedirection = new vector2(Math.cos(this.rotation),Math.sin(this.rotation));
-        game.projectile.push(new Projectile(muzzleX,muzzleY,basedirection,this.projectileSpeed,this.damage,this.color));
+        game.projectiles.push(new Projectile(muzzleX,muzzleY,basedirection,this.projectileSpeed,this.damage,this.color));
         if(this.multiShot>0){
             const spread =0.2;
             const leftDir =new vector2(Math.cos(this.rotation-spread),Math.sin(this.rotation -spread));
-            game.projectile.push(new Projectile(muzzleX,muzzleY,leftDir,this.projectileSpeed,this.damage,this.color));
+            game.projectiles.push(new Projectile(muzzleX,muzzleY,leftDir,this.projectileSpeed,this.damage,this.color));
             if(this.multiShot>1){
                 const rightDir = new vector2(Math.cos(this.rotation+spread),Math.sin(this.rotation+spread));
-                game.projectile.push(new Projectile(muzzleX,muzzleY,rightDir,this.projectileSpeed,this.damage,this.color));
+                game.projectiles.push(new Projectile(muzzleX,muzzleY,rightDir,this.projectileSpeed,this.damage,this.color));
             }
         }
         this.fireCooldown=this.fireRate;
@@ -375,15 +406,6 @@ class ShopSystem{
         };
     }
     reset(){
-        this.levels ={
-            fireRate:0,
-            damage:0,
-            bulletSpeed:0,
-            multiShot:0,
-            maxHealth:0
-        };
-    }
-    reset(){
         this.levels={
             fireRate:0,
             damage:0,
@@ -392,26 +414,27 @@ class ShopSystem{
             maxHealth:0
         };
         this.costs={
-            fireRate:100,
-            damage:200,
-            heal:150,
-            bulletSpeed:80,
-            multiShot:500,
-            maxHealth:300
+            fireRate:50,
+            damage:100,
+            heal:100,
+            bulletSpeed:40,
+            multiShot:250,
+            maxHealth:150
         };
-        buyUpgrade(type){
+    }
+    buyUpgrade(type){
             const cost =this.costs[type];
             if(game.credits>=cost){
                 game.credits -=cost;
                 game.audio.playupgradesound();
                 switch(type){
                     case 'fireRate':
-                        game.player.fireRate = Math.max(5,game.player.fireRate*0.05);
+                        game.player.fireRate = Math.max(5,game.player.fireRate - 1);
                         this.costs.fireRate =Math.floor(this.costs.fireRate*1.5);
                         break;
                     case 'damage':
                         game.player.damage +=5;
-                        this.costs.damage =Math.floor(this.costs.damage*1.4);
+                        this.costs.damage =Math.floor(this.costs.damage*1.3);
                         break;
                     case 'heal':
                         game.player.health = Math.min(game.player.health +(game.player.maxHealth*0.25),game.player.maxHealth);
@@ -438,7 +461,6 @@ class ShopSystem{
                 game.updateCreditsUi();
             }
         }
-    }
         updateButtons(){
             document.getElementById('cost-rate').innerText=this.costs.fireRate;
             document.getElementById('cost-damage').innerText=this.costs.damage;
@@ -454,9 +476,9 @@ class ShopSystem{
             this.checkAffordability();
         }
         checkAffordability(){
-            const ids = ['rate','damage','heal','speed','multi','maxhp'];
+            const idsList = ['rate','damage','heal','speed','multi','maxhp'];
             const types =['fireRate','damage','heal','bulletSpeed','multiShot','maxHealth'];
-            ids.forEach((ids,index)=>{
+            idsList.forEach((id,index)=>{
                 const btn = document.getElementById('btn-'+ id);
                 const type =types[index];
                 if(type==='multiShot'&&game.player.multiShot>=2)return;
@@ -477,7 +499,8 @@ class ShopSystem{
             this.mouseY =0;
             this.mouseDown=false;
             window.addEventListener('mousemove',(e)=>{
-                const rect =game.canvas.getBoundingClientRect();
+                const canvas = document.getElementById('gameCanvas');
+                const rect = canvas.getBoundingClientRect();
                 this.mouseX= e.clientX-rect.left;
                 this.mouseY = e.clientY -rect.top;
             });
@@ -488,7 +511,9 @@ class ShopSystem{
                 this.mouseDown = false;
             });
             window.addEventListener('resize',()=>{
-                game.resizeCanvas();
+                const canvas = document.getElementById('gameCanvas');
+                canvas.width = canvas.parentElement.clientWidth;
+                canvas.height = canvas.parentElement.clientHeight;
             });
         }
     }
@@ -545,7 +570,8 @@ class Game{
             this.enemiesToSpawn =10+ Math.floor(Math.pow(this.wave,1.8));
         }
         this.spawnTimer = 0;
-        const waveText = "WAVE"+ this.wave;
+        const waveText = document.getElementById('wave-announcement');
+        waveText.innerText = "WAVE " + this.wave;
         waveText.classList.add('show');
         setTimeout(()=>waveText.classList.remove('show'),2000);
         document.getElementById('wave-display').innerText =this.wave;
@@ -627,7 +653,7 @@ class Game{
                     setTimeout(()=>this.openShop(),1000);
                 }
             }
-            for(let i=this.projectiles.length-1;i>=0;i++){
+            for(let i=this.projectiles.length-1;i>=0;i--){
                 const p=this.projectiles[i];
                 p.update();
                 if(!p.active){
@@ -663,5 +689,25 @@ class Game{
             if(this.FloatingTexts[i].life<=0)this.FloatingTexts.splice(i,1);
         }
     }
-    
+    //almost done yay
+    draw(){
+        this.ctx.fillStyle ='rgba(0,0,0,0.3)';
+        this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
+        this.enemies.forEach(e=>e.draw(this.ctx));
+        this.projectiles.forEach(p=>p.draw(this.ctx));
+        this.particles.forEach(p=>p.draw(this.ctx));
+        this.FloatingTexts.forEach(t=>t.draw(this.ctx));
+        if(this.state==='PLAYING'){
+            this.player.draw(this.ctx);
+        }
+    }
+    loop(timestamp){
+        const dt=timestamp-this.lastTime;
+        this.lastTime= timestamp;
+        this.update();
+        this.draw();
+        requestAnimationFrame((t)=>this.loop(t));
+    }
 }
+const game = new Game();
+//finallt done
