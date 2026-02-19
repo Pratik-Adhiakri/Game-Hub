@@ -36,34 +36,3 @@ style.css - This is the main CSS file that has the styling of the homepage.
 
 /Game Folder - Each game has its own folder which contains the base HTML, their styling CSS and their logic, JavaScript file.
 
-About
-No description, website, or topics provided.
-Resources
- Readme
- Activity
-Stars
- 0 stars
-Watchers
- 0 watching
-Forks
- 0 forks
-Releases
-No releases published
-Create a new release
-Packages
-No packages published
-Publish your first package
-Deployments
-7
- github-pages 12 minutes ago
-+ 6 deployments
-Languages
-JavaScript
-65.0%
- 
-CSS
-19.2%
- 
-HTML
-15.8%
-Footer
