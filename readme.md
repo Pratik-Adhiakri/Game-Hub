@@ -1,5 +1,5 @@
 <h1>Game Hub</h1>
-<p>Game Hub is a collection of simple and fun games made by using HTML, CSS and JavaScript. Here, Each game is unique and different from each another. You can click any game you want to play in https://pratik-gamehub.vercel.app to play and Enjoy.</p>
+<p>Game Hub is a collection of simple and fun games made by using HTML, CSS and JavaScript. Here, Each game is unique and different from each another. You can click any game you want to play in https://gamehubbypratik.netlify.app/ to play and Enjoy.</p>
 <h3>Overview</h3>
 <p>Game hub is a gateway to explore different games of different genres in our own supported browser. Here, the games use HTML Canvas to run and the core game mechanics are implemented from JavaScript.</p>
 <h3>Games:</h3>
